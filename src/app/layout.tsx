@@ -15,10 +15,10 @@ const plusJakartaSans = Plus_Jakarta_Sans({
 
 export const metadata: Metadata = {
   title: {
-    default: "Admin Dashboard | Taxi",
-    template: "%s | Taxi",
+    default: "Admin Dashboard | Site Source",
+    template: "%s | Site Source",
   },
-  description: "This is Official Application Dashboard for Taxi",
+  description: "This is Official Application Dashboard for Site Source",
 };
 
 export default function RootLayout({
