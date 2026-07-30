@@ -78,7 +78,7 @@ export function ResetPasswordForm() {
                       <Input
                         type={showNewPassword ? "text" : "password"}
                         placeholder="Password"
-                        className="pl-10 pr-10 h-12 border-gray-300 focus:border-main-color focus:ring-main-color"
+                        className="pl-10 pr-10 h-12 border-gray-300 focus:border-black focus:ring-black"
                         {...field}
                       />
                       <button
@@ -114,7 +114,7 @@ export function ResetPasswordForm() {
                       <Input
                         type={showConfirmPassword ? "text" : "password"}
                         placeholder="Password"
-                        className="pl-10 pr-10 h-12 border-gray-300 focus:border-main-color focus:ring-main-color"
+                        className="pl-10 pr-10 h-12 border-gray-300 focus:border-black focus:ring-black"
                         {...field}
                       />
                       <button
@@ -140,7 +140,7 @@ export function ResetPasswordForm() {
             {/* Reset Password Button */}
             <Button
               type="submit"
-              className="w-full h-12 bg-main-color hover:bg-red-800 text-white font-medium text-base"
+              className="w-full h-12 bg-black hover:bg-black/80 text-white font-medium text-base"
             // disabled={isLoading}
             >
               Submit

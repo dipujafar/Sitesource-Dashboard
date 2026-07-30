@@ -11,9 +11,9 @@ export const metadata: Metadata = {
 const LoginPage = () => {
   return (
     <div className="bg-[#F8F9FA] flex min-h-screen items-center justify-center gap-10 md:flex-row ">
-      <div className="flex-1">
+      {/* <div className="flex-1">
       <Image src={loginPageImage} alt="Login Page Image" className="h-screen object-cover w-full" />
-      </div>
+      </div> */}
       <div  className="flex-1">
         <LoginForm />
       </div>

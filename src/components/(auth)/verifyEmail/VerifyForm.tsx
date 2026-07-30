@@ -122,7 +122,7 @@ export function OtpVerificationForm() {
                           onChange={(e) => handleInputChange(index, e.target.value)}
                           onKeyDown={(e) => handleKeyDown(index, e)}
                           onPaste={handlePaste}
-                          className="w-12 h-12 text-center text-lg font-semibold border-gray-300 focus:border-main-color focus:ring-main-color rounded-full"
+                          className="w-12 h-12 text-center text-lg font-semibold border-gray-300 focus:border-black focus:ring-black rounded-full"
                         />
                       ))}
                     </div>
@@ -136,7 +136,7 @@ export function OtpVerificationForm() {
             <Button
               type="submit"
               // disabled={isLoading}
-              className="w-full h-12 bg-main-color hover:bg-main-color text-white font-medium text-base"
+              className="w-full h-12 bg-black hover:bg-black/90 text-white font-medium text-base"
             >
               Verify Email
               {/* {isLoading && "..."} */}

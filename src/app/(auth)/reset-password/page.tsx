@@ -9,10 +9,10 @@ export const metadata: Metadata = {
 
 const ResetPassword = () => {
   return <div className="bg-[#F8F9FA] flex min-h-screen items-center justify-center gap-10 md:flex-row ">
-    <div className="flex-1">
+    {/* <div className="flex-1">
       <Image
         src={resetPassImage} alt="Reset Password Page Image" className="h-screen object-cover w-full" />
-    </div>
+    </div> */}
     <div className="flex-1">
       <ResetPasswordForm />
     </div>
