@@ -1,55 +1,51 @@
-import { Users, Building2, Store, TrendingUp } from 'lucide-react'
+"use client";
+import { useGetDashboardStatQuery } from "@/redux/api/dashboardApi";
+import { Skeleton } from "antd";
+import { Users, Store, ListChecks } from "lucide-react";
+import { FaUserGroup } from "react-icons/fa6";
 
 interface MetricCard {
-  icon: React.ReactNode
-  percentage: string
-  value: string
-  label: string
-  iconBgColor: string
+  icon: React.ReactNode;
+  value: string;
+  label: string;
+  iconBgColor: string;
+  loading?: boolean;
 }
 
-export default function MetricsDashboard() {
+export default function MetricsDashboard({data, isLoading}: any) {
+
+
   const metrics: MetricCard[] = [
     {
       icon: <Users className="w-6 h-6" />,
-      percentage: '+12.4%',
-      value: '2,847',
-      label: 'Total Workers',
-      iconBgColor: 'bg-blue-100',
+      value: data?.totalEmployers,
+      label: "Total Employers",
+      iconBgColor: "bg-blue-100",
+      loading: isLoading,
     },
     {
-      icon: <Building2 className="w-6 h-6" />,
-      percentage: '+8.2%',
-      value: '634',
-      label: 'Total Contractors',
-      iconBgColor: 'bg-purple-100',
-    },
-    {
-      icon: <Store className="w-6 h-6" />,
-      percentage: '+5.1%',
-      value: '312',
-      label: 'Active Engagements',
-      iconBgColor: 'bg-green-100',
-    },
-    {
-      icon: <TrendingUp className="w-6 h-6" />,
-      percentage: '+5.7%',
-      value: '£48,200',
-      label: 'Monthly Revenue',
-      iconBgColor: 'bg-orange-100',
-    },
-  ]
+      icon: <FaUserGroup className="w-6 h-6" />,
 
-  const iconColors = [
-    'text-blue-500',
-    'text-purple-500',
-    'text-green-500',
-    'text-orange-500',
-  ]
+      value: data?.totalWorkers,
+      label: "Total Workers",
+      iconBgColor: "bg-purple-100",
+      loading: isLoading,
+    },
+    {
+      icon: <ListChecks className="w-6 h-6" />,
+
+      value: data?.totalJobs,
+      label: "Total Jobs",
+      iconBgColor: "bg-green-100",
+      loading: isLoading,
+    },
+  ];
+
+  const iconColors = ["text-blue-500", "text-purple-500", "text-green-500"];
 
   return (
     <div className="w-full bg-gray-50">
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8 ">
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 ">
         {metrics.map((metric, index) => (
           <div
             key={index}
@@ -58,31 +54,27 @@ export default function MetricsDashboard() {
             {/* Header with Icon and Percentage */}
             <div className="flex items-start justify-between mb-5">
               {/* Icon */}
-              <div className={`${metric.iconBgColor} size-8 px-5 py-5 rounded-xl flex items-center justify-center flex-shrink-0`}>
-                <div className={`${iconColors[index]} `}>
-                  {metric.icon}
-                </div>
-              </div>
-
-              {/* Percentage */}
-              <div className="text-teal-500 text-base font-semibold flex items-center gap-1">
-                <span className="text-lg">↗</span>
-                {metric.percentage}
+              <div
+                className={`${metric.iconBgColor} size-8 px-5 py-5 rounded-xl flex items-center justify-center flex-shrink-0`}
+              >
+                <div className={`${iconColors[index]} `}>{metric.icon}</div>
               </div>
             </div>
 
             {/* Value */}
-            <div className="text-3xl font-bold text-gray-900 mb-2">
-              {metric.value}
-            </div>
+            {metric?.loading ? (
+              <Skeleton.Input active className="mb-2" />
+            ) : (
+              <div className="text-3xl font-bold text-gray-900 mb-2">
+                {metric.value}
+              </div>
+            )}
 
             {/* Label */}
-            <div className="text-gray-500 text-base ">
-              {metric.label}
-            </div>
+            <div className="text-gray-500 text-base ">{metric.label}</div>
           </div>
         ))}
       </div>
     </div>
-  )
+  );
 }

@@ -13,18 +13,19 @@ import {
   FormLabel,
   FormMessage,
 } from "@/components/ui/form";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import logo from "@/assets/logo.png";
 import Image from "next/image";
-
 import { toast } from "sonner";
-// import { useResetPasswordMutation } from "@/redux/api/authApi";
 import { ResetPasswordFormValues, resetPasswordSchema } from "./schema";
+import { useResetPasswordMutation } from "@/redux/api/authApi";
 
 export function ResetPasswordForm() {
   const [showNewPassword, setShowNewPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
-  // const [resetPass, { isLoading }] = useResetPasswordMutation();
+  const [resetPass, { isLoading }] = useResetPasswordMutation();
+  const token = useSearchParams().get("identifier");
+  const email = useSearchParams().get("email");
 
   const form = useForm<ResetPasswordFormValues>({
     resolver: zodResolver(resetPasswordSchema),
@@ -36,22 +37,28 @@ export function ResetPasswordForm() {
   const router = useRouter();
 
   const onSubmit = async (values: ResetPasswordFormValues) => {
-    const formattedData = { newPassword: values.newPassword, confirmPassword: values.confirmPassword };
+    const formattedData = {
+      email: email || "",
+      resetToken: token || "",
+      password: values.newPassword,
+    };
     try {
-      // await resetPass(formattedData).unwrap();
-      // sessionStorage.removeItem("resetPasswordToken");
-      // toast.success("Password reset successfully");
+      await resetPass(formattedData).unwrap();
+      toast.success("Password reset successfully");
       router.push("/login");
     } catch (error: any) {
       toast.error(error?.data?.message || "Failed to reset password");
     }
-  }
-
+  };
 
   return (
     <div className="flex-1 bg-gray-50 h-screen flex flex-col items-center justify-center px-12">
       <div className="w-full max-w-lg space-y-6 bg-white p-8 rounded-lg shadow-md">
-        <Image src={logo} alt="application logo" className="w-32 mx-auto mb-7" />
+        <Image
+          src={logo}
+          alt="application logo"
+          className="w-32 mx-auto mb-7"
+        />
         <div className="text-center space-y-2">
           <h2 className="text-3xl font-semibold text-gray-900">
             Reset Password
@@ -141,10 +148,10 @@ export function ResetPasswordForm() {
             <Button
               type="submit"
               className="w-full h-12 bg-black hover:bg-black/80 text-white font-medium text-base"
-            // disabled={isLoading}
+              disabled={isLoading}
             >
               Submit
-              {/* {isLoading && "..."} */}
+              {isLoading && "..."}
             </Button>
           </form>
         </Form>

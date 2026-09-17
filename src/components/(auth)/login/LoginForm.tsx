@@ -16,11 +16,20 @@ import {
 } from "@/components/ui/form";
 import Link from "next/link";
 import { LoginFormValues, loginSchema } from "./Schema";
-import logo from "@/assets/logo.png"
+import logo from "@/assets/logo.png";
 import Image from "next/image";
+import { useLoginMutation } from "@/redux/api/authApi";
+import { useAppDispatch } from "@/redux/hooks";
+import { useRouter } from "next/navigation";
+import { setUser } from "@/redux/features/authSlice";
+import { toast } from "sonner";
+import { jwtDecode } from "jwt-decode";
 
 export function LoginForm() {
   const [showPassword, setShowPassword] = useState(false);
+  const [login, { isLoading }] = useLoginMutation();
+  const dispatch = useAppDispatch();
+  const router = useRouter();
 
   const form = useForm<LoginFormValues>({
     resolver: zodResolver(loginSchema),
@@ -30,24 +39,49 @@ export function LoginForm() {
     },
   });
 
-  const onSubmit = (values: LoginFormValues) => {
-    console.log(values);
-    // Handle login logic here
+  const onSubmit = async (values: LoginFormValues) => {
+    const formattedData: {
+      email: string;
+      password: string;
+      fcmToken?: string;
+    } = {
+      email: values.email,
+      password: values.password,
+    };
+
+    try {
+      const res = await login(formattedData).unwrap();
+      dispatch(
+        setUser({
+          user: jwtDecode(res?.data?.accessToken),
+          token: res?.data?.accessToken,
+        }),
+      );
+      toast.success("Sign in successful");
+      router.push("/dashboard");
+    } catch (err: any) {
+      toast.error(err.data.message);
+    }
   };
 
   return (
     <div className="min-h-screen flex flex-col md:flex-row ">
-
-
       {/* Right Side - Login Form */}
       <div className="flex-1  flex flex-col items-center justify-center px-12 ">
         {/* Login Form */}
         <div className="w-full max-w-lg space-y-6 bg-white p-8 rounded-lg shadow-md">
-          <Image src={logo} alt="application logo" className="w-32 mx-auto mb-7" />
+          <Image
+            src={logo}
+            alt="application logo"
+            className="w-32 mx-auto mb-7"
+          />
           <div className="text-center space-y-2">
-            <h2 className="text-3xl font-semibold text-gray-900">Login To Your Account</h2>
+            <h2 className="text-3xl font-semibold text-gray-900">
+              Login To Your Account
+            </h2>
             <p className="text-gray-600">
-              Please log in to manage your dashboard and access all your administrative tools
+              Please log in to manage your dashboard and access all your
+              administrative tools
             </p>
           </div>
 
@@ -126,10 +160,11 @@ export function LoginForm() {
 
               {/* Login Button */}
               <Button
+                disabled={isLoading}
                 type="submit"
                 className="w-full h-12 bg-black hover:bg-gray-900 text-white font-medium text-base"
               >
-                Log In
+                {isLoading ? "Loading..." : "Log In"}
               </Button>
             </form>
           </Form>

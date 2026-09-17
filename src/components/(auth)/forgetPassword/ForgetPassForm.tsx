@@ -16,6 +16,8 @@ import { ForgetPassFormValues, forgetPassSchema } from "./Schema";
 import { useRouter } from "next/navigation";
 import logo from "@/assets/logo.png";
 import Image from "next/image";
+import { useForgetPasswordMutation } from "@/redux/api/authApi";
+import { toast } from "sonner";
 
 export function ForgetPassForm() {
   const form = useForm<ForgetPassFormValues>({
@@ -25,27 +27,44 @@ export function ForgetPassForm() {
     },
   });
   const router = useRouter();
+  const [forgetPass, { isLoading }] = useForgetPasswordMutation();
 
-  const onSubmit = (values: ForgetPassFormValues) => {
-    router.push("/verify-email");
+  const onSubmit = async (values: ForgetPassFormValues) => {
+    const formattedData = {
+      email: values.email,
+      purpose: "RESET_PASSWORD",
+    };
+    try {
+      const res = await forgetPass(formattedData).unwrap();
+      console.log(res);
+      // sessionStorage.setItem("forgotPasswordToken", res?.data?.token);
+      toast.success(
+        "Verification code has been sent to your email. Please check your inbox.",
+      );
+      router.push(`/verify-email?email=${values.email}`);
+    } catch (error: any) {
+      toast.error(error?.data?.message || "Failed to reset password");
+    }
   };
 
   return (
     <div className="min-h-screen flex flex-col md:flex-row">
-      {/* Left Side - Purple Gradient with Logo */}
-      {/* <LogoSection /> */}
-
       {/* Right Side - Login Form */}
       <div className="flex-1 bg-gray-50 flex flex-col items-center justify-center px-12">
         {/* forgot password form */}
         <div className="w-full max-w-lg space-y-6 bg-white p-8 rounded-lg shadow-md">
-          <Image src={logo} alt="application logo" className="w-32 mx-auto mb-7" />
+          <Image
+            src={logo}
+            alt="application logo"
+            className="w-32 mx-auto mb-7"
+          />
           <div className="text-center space-y-2">
             <h2 className="text-3xl font-semibold text-gray-900">
               Recover Password
             </h2>
             <p className="text-gray-600">
-             Please provide the email address associated with your account, and we’ll send you verification code to reset your password.
+              Please provide the email address associated with your account, and
+              we’ll send you verification code to reset your password.
             </p>
           </div>
 
@@ -78,10 +97,11 @@ export function ForgetPassForm() {
 
               {/* Login Button */}
               <Button
+                disabled={isLoading}
                 type="submit"
                 className="w-full h-12 bg-black hover:bg-gray-900 text-white font-medium text-base"
               >
-                Send OTP
+                {isLoading ? "Sending OTP..." : "Send OTP"}
               </Button>
             </form>
           </Form>

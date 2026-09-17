@@ -6,6 +6,7 @@ import { ConfigProvider } from "antd";
 import antTheme from "@/theme/antTheme";
 import { Plus_Jakarta_Sans } from "next/font/google";
 import { Toaster } from "sonner";
+import { ReduxProvider } from "@/lib/provider/ReduxProvider";
 
 const plusJakartaSans = Plus_Jakarta_Sans({
   subsets: ["latin"],
@@ -29,12 +30,14 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body className={plusJakartaSans.className}>
-        <AntdRegistry>
-          <ConfigProvider theme={antTheme}>
-            <Toaster position="top-center" />
-            {children}
-          </ConfigProvider>
-        </AntdRegistry>
+        <ReduxProvider>
+          <AntdRegistry>
+            <ConfigProvider theme={antTheme}>
+              <Toaster position="top-center" richColors />
+              {children}
+            </ConfigProvider>
+          </AntdRegistry>
+        </ReduxProvider>
       </body>
     </html>
   );

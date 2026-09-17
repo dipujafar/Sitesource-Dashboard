@@ -25,6 +25,16 @@ export const navLinks = [
     label: <Link href={"/dashboard"}>Dashboard</Link>,
   },
   {
+    key: "users",
+    icon: <UsersRound size={18} />,
+    label: <Link href={"/users"}>Users</Link>,
+  },
+  {
+    key: "jobs",
+    icon: <Briefcase size={18} />,
+    label: <Link href={"/jobs"}>Jobs</Link>,
+  },
+  {
     key: "contractors",
     icon: <ContactRound size={18} />,
     label: <Link href={"/contractors"}>Contractors</Link>,
