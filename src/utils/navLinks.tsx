@@ -1,22 +1,7 @@
 import { RiDashboardHorizontalFill } from "react-icons/ri";
 import { IoSettingsOutline } from "react-icons/io5";
 import Link from "next/link";
-import {
-  Briefcase,
-  Car,
-  ChartSpline,
-  Clock,
-  ContactRound,
-  Headset,
-  MessageCircleMore,
-  Scale,
-  SquareTerminal,
-  Users,
-  UsersRound,
-  Wallet,
-  WalletCards,
-} from "lucide-react";
-import { DriverIcon, LYDIcon } from "@/icon";
+import { Briefcase, Headset, Star, UsersRound } from "lucide-react";
 
 export const navLinks = [
   {
@@ -35,35 +20,20 @@ export const navLinks = [
     label: <Link href={"/jobs"}>Jobs</Link>,
   },
   {
-    key: "contractors",
-    icon: <ContactRound size={18} />,
-    label: <Link href={"/contractors"}>Contractors</Link>,
+    key: "supports",
+    icon: <Headset size={18} />,
+    label: <Link href={"/supports"}>Supports</Link>,
   },
   {
-    key: "workers",
-    icon: <Users size={18} />,
-    label: <Link href={"/workers"}>Workers</Link>,
+    key: "reviews",
+    icon: <Star size={18} />,
+    label: <Link href={"/reviews"}>Reviews</Link>,
   },
-  {
-    key: "engagements",
-    icon: <Briefcase size={18} />,
-    label: <Link href={"/engagements"}>Engagements</Link>,
-  },
-  {
-    key: "timesheets",
-    icon: <Clock size={18} />,
-    label: <Link href={"/time-sheets"}>Time Sheets</Link>,
-  },
-  {
-    key: "payroll-partner",
-    icon: <Wallet size={18} />,
-    label: <Link href={"/payroll-partner"}>Payroll Partner</Link>,
-  },
-  {
-    key: "disputes",
-    icon: <Scale size={18} />,
-    label: <Link href={"/disputes"}>Disputes</Link>,
-  },
+  // {
+  //   key: "payroll-partner",
+  //   icon: <Wallet size={18} />,
+  //   label: <Link href={"/payroll-partner"}>Payroll Partner</Link>,
+  // },
   {
     key: "settings",
     icon: <IoSettingsOutline size={18} />,

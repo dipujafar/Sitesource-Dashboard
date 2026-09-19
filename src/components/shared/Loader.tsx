@@ -1,8 +1,9 @@
 import { ConfigProvider, Spin } from "antd";
+import React from "react";
 
-const loading = () => {
+export default function Loader() {
   return (
-    <div className=" h-screen w-full flex justify-center items-center">
+    <div className=" h-[calc(100vh-150px)] w-full flex justify-center items-center">
       <ConfigProvider
         theme={{
           components: {
@@ -16,6 +17,4 @@ const loading = () => {
       </ConfigProvider>
     </div>
   );
-};
-
-export default loading;
+}

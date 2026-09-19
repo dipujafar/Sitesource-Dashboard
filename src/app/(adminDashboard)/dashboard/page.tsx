@@ -9,7 +9,6 @@ import { useGetDashboardStatQuery } from "@/redux/api/dashboardApi";
 
 const DashboardPage = () => {
   const { data, isLoading } = useGetDashboardStatQuery(undefined);
-  console.log(data?.data?.userGrowth);
   return (
     <div className="lg:space-y-7 space-y-5 ">
       <StatContainer data={data?.data} isLoading={isLoading} />

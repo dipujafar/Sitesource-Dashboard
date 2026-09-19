@@ -36,7 +36,6 @@ export function ForgetPassForm() {
     };
     try {
       const res = await forgetPass(formattedData).unwrap();
-      console.log(res);
       // sessionStorage.setItem("forgotPasswordToken", res?.data?.token);
       toast.success(
         "Verification code has been sent to your email. Please check your inbox.",

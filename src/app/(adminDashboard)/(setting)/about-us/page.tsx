@@ -3,7 +3,7 @@ import AboutUsEditor from "@/components/(adminDashboard)/(setting)/aboutUs/About
 const AboutUsPage = () => {
   return (
     <>
-      <AboutUsEditor></AboutUsEditor>
+      <AboutUsEditor />
     </>
   );
 };

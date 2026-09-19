@@ -111,7 +111,7 @@ const UsersTable = () => {
   return (
     <div className="bg-section-bg rounded-xl">
       <div className="md:flex items-center justify-between gap-3 py-4 px-2">
-        <div className="flex flex-col md:flex-row items-center gap-2 ml-auto flex-1 max-w-[500px] border">
+        <div className="flex flex-col md:flex-row items-center gap-2 ml-auto flex-1 max-w-[500px]">
           <Input
             value={searchText}
             onChange={(e) => setSearchText(e.target.value)}

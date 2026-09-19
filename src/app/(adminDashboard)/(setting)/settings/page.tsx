@@ -1,10 +1,8 @@
-import SettingContainer from '@/components/(adminDashboard)/(setting)/SettingContainer';
-import React from 'react';
+import SettingContainer from "@/components/(adminDashboard)/(setting)/SettingContainer";
+import React from "react";
 
 const SettingsPage = () => {
-    return (
-        <SettingContainer></SettingContainer>
-    );
+  return <SettingContainer />;
 };
 
 export default SettingsPage;

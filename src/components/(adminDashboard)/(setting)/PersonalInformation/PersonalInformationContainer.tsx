@@ -1,47 +1,117 @@
 "use client";
-import { Button, ConfigProvider, Form, Input } from "antd";
+
+import { Button, Form, Input, message } from "antd";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
+import { useEffect, useState } from "react";
 import { FaArrowLeft } from "react-icons/fa6";
 import { FiEdit } from "react-icons/fi";
-import profile from "@/assets/image/adminProfile.png";
-import { useState } from "react";
-import { toast } from "sonner";
-import { Camera, Trash2, X } from "lucide-react";
+import { Camera, Trash2 } from "lucide-react";
+
+import profileDefault from "@/assets/image/images.png";
+import {
+  useGetProfileQuery,
+  useUpdateProfileMutation,
+} from "@/redux/api/profileApi";
+
+type ProfileFormValues = {
+  name: string;
+  email: string;
+};
 
 const PersonalInformationContainer = () => {
   const route = useRouter();
-  const [form] = Form.useForm();
+  const [form] = Form.useForm<ProfileFormValues>();
   const [edit, setEdit] = useState(false);
-  const [fileName, setFileName] = useState<File | null>(null);
+  const [selectedFile, setSelectedFile] = useState<File | null>(null);
   const [imageUrl, setImageUrl] = useState<string | null>(null);
 
-  // @ts-expect-error: Ignoring TypeScript error due to inferred 'any' type for 'values' which is handled in the form submit logic
-  const handleSubmit = (values) => {
-    toast.success("Successfully Change personal information", {
-      duration: 1000,
-    });
-    setEdit(false);
+  const { data, isLoading } = useGetProfileQuery(undefined);
+  const [updateProfile, { isLoading: isUpdating }] = useUpdateProfileMutation();
+
+  useEffect(() => {
+    const profileData = data?.data;
+    const profile = profileData?.profile;
+
+    if (profileData) {
+      form.setFieldsValue({
+        name: profile?.name || "",
+        email: profileData.email || "",
+      });
+
+      if (profile?.image) {
+        setImageUrl(profile.image);
+      } else {
+        setImageUrl(null);
+      }
+    }
+  }, [data, form]);
+
+  const handleSubmit = async (values: ProfileFormValues) => {
+    try {
+      const formData = new FormData();
+      formData.append("name", values.name || "");
+
+      if (selectedFile) {
+        formData.append("image", selectedFile);
+      }
+
+      await updateProfile(formData).unwrap();
+      message.success("Profile updated successfully");
+      setEdit(false);
+      setSelectedFile(null);
+    } catch (error: any) {
+      message.error(error?.data?.message || "Failed to update profile");
+    }
   };
 
   const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    const input = event.target;
+    const file = event.target.files?.[0];
 
-    const file = input.files?.[0];
-    console.log(file);
-
-    if (file) {
-      const url = URL.createObjectURL(file);
-      console.log(url);
-      setImageUrl(url);
-      setFileName(file);
-    } else {
-      setImageUrl(null);
-      setFileName(null);
+    if (!file) {
+      setSelectedFile(null);
+      setImageUrl(data?.data?.image || null);
+      return;
     }
 
-    input.value = "";
+    setSelectedFile(file);
+    setImageUrl(URL.createObjectURL(file));
+    event.target.value = "";
   };
+
+  const handleRemoveSelectedImage = () => {
+    setSelectedFile(null);
+    setImageUrl(data?.data?.image || null);
+  };
+
+  if (isLoading) {
+    return (
+      <div className="space-y-6">
+        <div className="flex justify-between items-center">
+          <div className="flex items-center gap-3">
+            <div className="h-10 w-10 rounded-full bg-gray-200 animate-pulse" />
+            <div className="h-8 w-52 rounded-md bg-gray-200 animate-pulse" />
+          </div>
+          <div className="h-12 w-36 rounded-lg bg-gray-200 animate-pulse" />
+        </div>
+
+        <div className="mt-10 flex flex-col xl:flex-row items-center justify-center  gap-10">
+          <div className="bg-white h-[365px] md:w-[350px] rounded-xl border border-gray-200 flex justify-center items-center">
+            <div className="space-y-4 text-center">
+              <div className="mx-auto h-36 w-36 rounded-full bg-gray-200 animate-pulse" />
+              <div className="h-8 w-32 mx-auto rounded-md bg-gray-200 animate-pulse" />
+            </div>
+          </div>
+
+          <div className="w-full max-w-xl space-y-5">
+            <div className="h-12 rounded-lg bg-gray-200 animate-pulse" />
+            <div className="h-12 rounded-lg bg-gray-200 animate-pulse" />
+            <div className="h-12 rounded-lg bg-gray-200 animate-pulse" />
+          </div>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div>
@@ -57,12 +127,13 @@ const PersonalInformationContainer = () => {
             Personal Information
           </h4>
         </div>
-        <div className={edit ? "hidden" : ""}>
+
+        {!edit && (
           <Button
             style={{
               backgroundColor: "var(--color-secondary)",
               border: "none",
-              color: "var(--color-main)", 
+              color: "var(--color-main)",
             }}
             onClick={() => setEdit(true)}
             size="large"
@@ -70,36 +141,32 @@ const PersonalInformationContainer = () => {
           >
             Edit Profile
           </Button>
-        </div>
+        )}
       </div>
+
       <hr className="my-4" />
 
-      {/* personal information */}
-      <div className="mt-10 flex justify-center flex-col xl:flex-row items-center  gap-10">
-        <div className="bg-[#fff] h-[365px] md:w-[350px] rounded-xl border border-main-color flex justify-center items-center  text-text-color">
+      <div className="mt-10 flex justify-center flex-col xl:flex-row items-center gap-10">
+        <div className="bg-[#fff] h-[365px] md:w-[350px] rounded-xl border border-main-color flex justify-center items-center text-text-color">
           <div className="space-y-1 relative">
             <div className="relative group">
               <Image
-                src={imageUrl || profile}
+                src={imageUrl || profileDefault}
                 alt="adminProfile"
                 width={1200}
                 height={1200}
-                className="size-36 rounded-full flex justify-center items-center"
-              ></Image>
+                className="size-36 rounded-full flex justify-center items-center object-cover"
+              />
 
-              {/* cancel button */}
-              {fileName && imageUrl && (
+              {selectedFile && (
                 <div
-                  className="absolute left-4 top-2 cursor-pointer rounded-md bg-primary-pink opacity-0 duration-1000 group-hover:opacity-100"
-                  onClick={() => {
-                    setFileName(null);
-                    setImageUrl(null);
-                  }}
+                  className="absolute left-4 top-2 cursor-pointer rounded-md bg-white p-1 shadow-sm"
+                  onClick={handleRemoveSelectedImage}
                 >
-                  <Trash2 size={20} color="red" />
+                  <Trash2 size={18} color="red" />
                 </div>
               )}
-              {/* upload image */}
+
               <input
                 type="file"
                 id="fileInput"
@@ -107,99 +174,61 @@ const PersonalInformationContainer = () => {
                 onChange={handleFileChange}
                 accept="image/*"
               />
-              {/* upload button */}
-              <label
-                htmlFor="fileInput"
-                className="flex cursor-pointer flex-col items-center"
-              >
-                <div className="bg-white text-black text-lg p-1 rounded-full  absolute bottom-0 right-3">
-                  <Camera size={20} />
-                </div>
-              </label>
+
+              {edit && (
+                <label
+                  htmlFor="fileInput"
+                  className="flex cursor-pointer flex-col items-center"
+                >
+                  <div className="bg-white text-black text-lg p-1 rounded-full absolute bottom-0 right-3 shadow-sm">
+                    <Camera size={20} />
+                  </div>
+                </label>
+              )}
             </div>
-            <h3 className="text-2xl text-center">Admin</h3>
+
+            <h3 className="text-2xl text-center">
+              {data?.data?.profile?.name || "Admin"}
+            </h3>
           </div>
         </div>
-        {/* form */}
-        <div className="w-2/4">
-          <ConfigProvider
-            theme={{
-              components: {
-                Input: {
-                  colorBgContainer: "#fff",
-                  colorText: "#333",
-                  colorTextPlaceholder: "#fff",
-                },
-                Form: {
-                  labelColor: "#333",
-                },
-              },
-            }}
+
+        <div className="w-full max-w-xl">
+          <Form
+            form={form}
+            onFinish={handleSubmit}
+            layout="vertical"
+            style={{ marginTop: "25px" }}
+            initialValues={{ name: "", email: "" }}
           >
-            <Form
-              form={form}
-              onFinish={handleSubmit}
-              layout="vertical"
-              style={{
-                marginTop: "25px",
-              }}
-              initialValues={{
-                name: "James Tracy",
-                email: "enrique@gmail.com",
-                phone: "3000597212",
-              }}
+            <Form.Item
+              label="Name"
+              name="name"
+              rules={[{ required: true, message: "Please enter your name" }]}
             >
-              {/*  input  name */}
-              <Form.Item label="Name" name="name">
-                {edit ? (
-                  <Input size="large" placeholder="Enter full name "></Input>
-                ) : (
-                  <Input
-                    size="large"
-                    placeholder="Enter full name "
-                    readOnly
-                  ></Input>
-                )}
-              </Form.Item>
+              <Input
+                size="large"
+                placeholder="Enter full name"
+                readOnly={!edit}
+              />
+            </Form.Item>
 
-              {/*  input  email */}
-              <Form.Item label="Email" name="email">
-                {edit ? (
-                  <Input size="large" placeholder="Enter email "></Input>
-                ) : (
-                  <Input
-                    size="large"
-                    placeholder="Enter email"
-                    readOnly
-                  ></Input>
-                )}
-              </Form.Item>
+            <Form.Item label="Email" name="email">
+              <Input size="large" placeholder="Email" readOnly className="cursor-not-allowed hover:bg-gray-100" />
+            </Form.Item>
 
-              {/* input  phone number  */}
-              <Form.Item label="Phone Number" name="phone">
-                {edit ? (
-                  <Input size="large" placeholder="Enter Phone number"></Input>
-                ) : (
-                  <Input
-                    size="large"
-                    placeholder="Enter Phone number"
-                    readOnly
-                  ></Input>
-                )}
-              </Form.Item>
-
-              <div className={edit ? "" : "hidden"}>
-                <Button
-                  htmlType="submit"
-                  size="large"
-                  block
-                  style={{ border: "none" }}
-                >
-                  Save Change
-                </Button>
-              </div>
-            </Form>
-          </ConfigProvider>
+            {edit && (
+              <Button
+                htmlType="submit"
+                size="large"
+                block
+                style={{ border: "none" }}
+                loading={isUpdating}
+              >
+                {isUpdating ? "Saving..." : "Save Change"}
+              </Button>
+            )}
+          </Form>
         </div>
       </div>
     </div>
