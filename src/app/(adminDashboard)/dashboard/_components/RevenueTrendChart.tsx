@@ -1,49 +1,67 @@
 'use client';
 
+import { Skeleton } from 'antd';
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts';
 
-const data = [
-  { month: 'Jan', revenue: 32 },
-  { month: 'Feb', revenue: 37 },
-  { month: 'Mar', revenue: 40 },
-  { month: 'Apr', revenue: 43 },
-  { month: 'May', revenue: 45 },
-  { month: 'Jun', revenue: 48 },
-];
+const formatMonthLabel = (month: string) => {
+  if (!month) return '';
+  return month.slice(0, 3).charAt(0).toUpperCase() + month.slice(1, 3).toLowerCase();
+};
 
-export function RevenueTrendChart() {
+export function MonthlyJobsChart({ data, isLoading }: any) {
+  const chartData = Array.isArray(data)
+    ? data.map((item) => ({
+        month: formatMonthLabel(item?.month || ''),
+        jobs: Number(item?.jobs || 0),
+      }))
+    : [];
+
+  if (isLoading) {
+    return (
+      <div className="w-full bg-white rounded-2xl p-6">
+        <Skeleton.Input active size="small" style={{ width: 170, marginBottom: 18 }} />
+        <Skeleton active paragraph={{ rows: 8 }} />
+      </div>
+    );
+  }
+
+  if (!chartData.length) {
+    return (
+      <div className="w-full bg-white rounded-2xl p-6 min-h-[250px] flex items-center justify-center">
+        <p className="text-gray-500 text-sm">No monthly jobs data available.</p>
+      </div>
+    );
+  }
+
   return (
     <div className="w-full bg-white rounded-2xl p-6">
-      {/* Header */}
       <div className="mb-8">
-        <h2 className="text-xl font-semibold text-gray-900">Revenue Trend</h2>
-        <p className="text-gray-500 text-sm">Introducer fees — last 6 months</p>
+        <h2 className="text-xl font-semibold text-gray-900">Monthly Jobs</h2>
+        <p className="text-gray-500 text-sm">Jobs posted — last 12 months</p>
       </div>
 
-      {/* Chart */}
       <ResponsiveContainer width="100%" height={250}>
-        <LineChart data={data} margin={{ top: 5, right: 30, left: 0, bottom: 5 }}>
+        <LineChart data={chartData} margin={{ top: 5, right: 20, left: 0, bottom: 5 }}>
           <defs>
-            <linearGradient id="colorRevenue" x1="0" y1="0" x2="0" y2="1">
+            <linearGradient id="colorJobs" x1="0" y1="0" x2="0" y2="1">
               <stop offset="5%" stopColor="#10b981" stopOpacity={0.1} />
               <stop offset="95%" stopColor="#10b981" stopOpacity={0} />
             </linearGradient>
           </defs>
           <CartesianGrid strokeDasharray="3 3" stroke="#e5e7eb" vertical={false} />
-          <XAxis 
-            dataKey="month" 
-            stroke="#6b7280" 
+          <XAxis
+            dataKey="month"
+            stroke="#6b7280"
             style={{ fontSize: '14px' }}
             axisLine={false}
             tickLine={false}
           />
-          <YAxis 
-            stroke="#6b7280" 
+          <YAxis
+            stroke="#6b7280"
             style={{ fontSize: '14px' }}
             axisLine={false}
             tickLine={false}
-            label={{ value: '£', angle: -90, position: 'insideLeft', offset: 10, style: { fill: '#6b7280' } }}
-            tickFormatter={(value) => `£${value}k`}
+            width={42}
           />
           <Tooltip
             contentStyle={{
@@ -52,15 +70,15 @@ export function RevenueTrendChart() {
               borderRadius: '8px',
             }}
             cursor={{ stroke: '#e5e7eb', strokeWidth: 1 }}
-            formatter={(value) => [`£${value}k`, 'Revenue']}
+            formatter={(value) => [`${value}`, 'Jobs']}
           />
           <Line
             type="natural"
-            dataKey="revenue"
+            dataKey="jobs"
             stroke="#10b981"
             strokeWidth={3}
-            dot={{ fill: '#10b981', r: 6 }}
-            activeDot={{ r: 8 }}
+            dot={{ fill: '#10b981', r: 5 }}
+            activeDot={{ r: 7 }}
             isAnimationActive={false}
           />
         </LineChart>

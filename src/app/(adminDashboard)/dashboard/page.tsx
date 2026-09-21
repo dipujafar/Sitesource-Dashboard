@@ -1,33 +1,37 @@
 "use client";
 import StatContainer from "./_components/stats/StatContainer";
 import { UserGrowthChart } from "./_components/UserGrowthChart";
-import { ActiveTradesChart } from "./_components/ActiveTradesChart";
-import { DailyEngagementsChart } from "./_components/DailyEngagementsChart";
-import { RevenueTrendChart } from "./_components/RevenueTrendChart";
-import { RecentActivity } from "./_components/RecentActivity";
+import { JobsByStatusChart } from "./_components/ActiveTradesChart";
+import { MonthlyJobsChart } from "./_components/RevenueTrendChart";
 import { useGetDashboardStatQuery } from "@/redux/api/dashboardApi";
 
 const DashboardPage = () => {
   const { data, isLoading } = useGetDashboardStatQuery(undefined);
+
   return (
     <div className="lg:space-y-7 space-y-5 ">
       <StatContainer data={data?.data} isLoading={isLoading} />
 
-      {/* <UserOverViewChart></UserOverViewChart>
-
-      <RecentAccountList></RecentAccountList> */}
-      <div className="grid lg:grid-cols-3 gap-5">
-        <div className="lg:col-span-2">
-          <UserGrowthChart data={data?.data?.userGrowth} isLoading={isLoading} />
+      <div className="grid xl:grid-cols-3 gap-5">
+        <div className="xl:col-span-2">
+          <UserGrowthChart
+            data={data?.data?.userGrowth}
+            isLoading={isLoading}
+          />
         </div>
-        <div>
-          <ActiveTradesChart />
+        <div className="w-full">
+          <JobsByStatusChart
+            data={data?.data?.jobsByStatus}
+            isLoading={isLoading}
+          />
         </div>
       </div>
-      <div className="grid xl:grid-cols-3 gap-3">
-        <DailyEngagementsChart />
-        <RevenueTrendChart />
-        <RecentActivity />
+
+      <div className="">
+        <MonthlyJobsChart
+          data={data?.data?.monthlyJobs}
+          isLoading={isLoading}
+        />
       </div>
     </div>
   );
