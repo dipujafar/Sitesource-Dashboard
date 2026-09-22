@@ -1,6 +1,6 @@
 "use client";
 
-import { Input, TableProps, Image } from "antd";
+import { Input, TableProps, Image, Button } from "antd";
 import { Search } from "lucide-react";
 import { useState } from "react";
 import { useSearchParams } from "next/navigation";
@@ -9,6 +9,7 @@ import { useDebounce } from "use-debounce";
 
 import DataTable from "@/utils/DataTable";
 import { useGetSupportsQuery } from "@/redux/api/supportsApi";
+import Link from "next/link";
 
 type TSupport = {
   id: string;
@@ -133,6 +134,15 @@ const SupportsTable = () => {
       dataIndex: "createdAt",
       render: (text) => (
         <p>{text ? moment(text).format("DD MMM YYYY") : "N/A"}</p>
+      ),
+    },
+    {
+      title: "Action",
+      dataIndex: "id",
+      render: (id, record) => (
+        <Link href={`mailto:${record?.senderAuth?.email}`}>
+          <Button> Reply</Button>
+        </Link>
       ),
     },
   ];
